@@ -1,9 +1,20 @@
 
+import { db } from '../db';
+import { investmentsTable } from '../db/schema';
 import { type DeleteInvestmentInput } from '../schema';
+import { eq } from 'drizzle-orm';
 
 export const deleteInvestment = async (input: DeleteInvestmentInput): Promise<boolean> => {
-    // This is a placeholder declaration! Real code should be implemented here.
-    // The goal of this handler is deleting an investment record from the database.
-    // It should return true if the investment was successfully deleted, false if not found.
-    return false;
+  try {
+    // Delete investment record
+    const result = await db.delete(investmentsTable)
+      .where(eq(investmentsTable.id, input.id))
+      .execute();
+
+    // Return true if a record was deleted, false if no record found
+    return (result.rowCount ?? 0) > 0;
+  } catch (error) {
+    console.error('Investment deletion failed:', error);
+    throw error;
+  }
 };
